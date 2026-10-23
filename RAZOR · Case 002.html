@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>RAZOR · Case 002</title>
+<style>
+:root{--bg:#eef1fb;--fg:#10172e;--mut:#56607e;--card:#fff;--bd:#cfd6ee;--ac:#2458e6;--ok:#0f7a55;--bad:#c42a3a;--warn:#a86a00;--bar:#dfe4f6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1126;--fg:#e6eafc;--mut:#9aa5cc;--card:#131b38;--bd:#27315c;--ac:#6f93ff;--ok:#3fd39b;--bad:#ff6b7a;--warn:#f2b043;--bar:#222c55}}
+:root[data-theme="dark"]{--bg:#0b1126;--fg:#e6eafc;--mut:#9aa5cc;--card:#131b38;--bd:#27315c;--ac:#6f93ff;--ok:#3fd39b;--bad:#ff6b7a;--warn:#f2b043;--bar:#222c55}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:760px;margin:0 auto;padding:22px 16px 60px}
+h1{font:700 30px/1.1 ui-monospace,Menlo,Consolas,monospace;margin:0 0 6px}
+h2{font-size:21px;margin:0 0 8px}.mut{color:var(--mut)}.sm{font-size:14px}
+.steps{display:flex;gap:8px;margin:18px 0}.steps button{flex:1;font:inherit;font-size:15px;padding:10px 6px;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;cursor:pointer}
+.steps button[aria-selected=true]{background:var(--ac);color:#fff;border-color:var(--ac)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.ans{border-left:6px solid var(--warn)}.ans.bad{border-left-color:var(--bad)}.ans.ok{border-left-color:var(--ok)}
+.ans strong{display:block;font-size:20px;line-height:1.3;margin-bottom:4px}
+.next{display:flex;justify-content:flex-end;margin-top:6px}
+.cta{font:inherit;padding:10px 16px;border-radius:9px;border:0;background:var(--ac);color:#fff;cursor:pointer}
+.cta.s{background:transparent;color:var(--fg);border:1px solid var(--bd)}
+.day{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px}.day span:first-child{width:52px;flex:none}.day span:last-child{width:150px;text-align:right;flex:none}
+.day .tr{flex:1;height:14px;background:var(--bar);border-radius:5px;overflow:hidden}.tr i{display:block;height:100%;background:var(--ac)}.tr i.x{background:var(--bad)}
+.bar{display:flex;height:26px;border-radius:7px;overflow:hidden;background:var(--bad);margin:10px 0}.bar i{display:block}
+details{margin-top:10px}summary{cursor:pointer;color:var(--ac);font-size:15px}
+label{display:block;font-size:13px;color:var(--mut);margin-top:8px}
+input[type=number]{width:100%;font:inherit;padding:6px 8px;border:1px solid var(--bd);border-radius:7px;background:var(--bg);color:var(--fg)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 12px}
+.q{padding:12px 0;border-bottom:1px solid var(--bd)}.q:last-child{border:0}.q.top{background:color-mix(in srgb,var(--ac) 10%,transparent);margin:0 -16px;padding:12px 16px}
+.q b{display:block}.q .tag{font-size:13px;color:var(--ac);font-weight:600}
+.q button{font:inherit;font-size:14px;padding:8px 12px;border-radius:8px;border:1px solid var(--ac);background:transparent;color:var(--ac);cursor:pointer;margin:8px 8px 0 0}
+.q .got{margin-top:6px;font-weight:600}.q .got button{border-color:var(--bd);color:var(--mut);padding:3px 9px;margin:0 0 0 8px}
+.pb{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:14px}.pb span:first-child{width:150px;flex:none}.pb .tr{flex:1;height:14px;background:var(--bar);border-radius:5px;overflow:hidden}.pb span:last-child{width:46px;text-align:right}
+ol{padding-left:22px;margin:6px 0}
+</style></head><body><main>
+<h1>RAZOR</h1>
+<p class="mut" style="margin:0">Case 002 · Wenoti Arcade. Did the arcade really use 2,684 kWh in one day, and was it an extradigital intrusion? Answer three questions in order.</p>
+<nav class="steps" role="tablist"><button role="tab" data-t="1" aria-selected="true">1. Are the numbers right?</button><button role="tab" data-t="2" aria-selected="false">2. Could that energy exist?</button><button role="tab" data-t="3" aria-selected="false">3. What do we do?</button></nav>
+
+<section id="s1" class="on">
+<div class="card ans bad" id="a1"></div>
+<div class="card"><h2>Daily usage the Department logged</h2><p class="mut sm" style="margin-top:0">Each day’s log should match how much the meter dial moved. Red means they disagree or the day is far from normal.</p><div id="days"></div></div>
+<div class="next"><button class="cta" data-go="2">Next: could that energy exist?</button></div>
+</section>
+
+<section id="s2">
+<div class="card ans bad" id="a2"></div>
+<div class="card"><h2>Where could 2,684 kWh go?</h2><div class="bar" role="img" aria-label="Share explained"><i id="b1" style="background:var(--ac)"></i><i id="b2" style="background:var(--ok)"></i></div><p class="sm mut" id="legend"></p><p id="why" style="margin-bottom:0"></p>
+<details><summary>Change the assumptions</summary><div class="g" id="pin"></div><p class="sm mut">These are guesses, not facts from the files. Change them to see how the answer moves.</p></details></div>
+<div class="next"><button class="cta" data-go="3">Next: what do we do?</button></div>
+</section>
+
+<section id="s3">
+<div class="card ans" id="a3"></div>
+<div class="card"><h2>Ask the field team</h2><p class="mut sm" style="margin-top:0">Report each result as it comes in. RAZOR always marks the cheapest test that learns the most.</p><div id="tests"></div></div>
+<div class="card"><h2>What we believe now</h2><div id="bars"></div><p class="sm mut" id="cls" style="margin-bottom:0"></p></div>
+<div class="card"><h2>What to do now</h2><div id="plan"></div></div>
+<details class="card"><summary>Advanced: starting odds and a stress test</summary><p class="sm mut">Starting odds are team guesses; edit them if you disagree.</p><div class="g" id="pri"></div><p><button class="cta" id="sim">Simulate 3,000 investigations</button> <button class="cta s" id="rst">Reset all tests</button></p><div id="simout" class="sm"></div></details>
+</section>
+<p class="sm mut">Prototype. Guesses: service rating, compressor size, room volume, chip mass, test likelihoods and costs. Nothing leaves your browser.</p>
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const f=(x,d=1)=>x===0?"0":(Math.abs(x)>=1e6||Math.abs(x)<1e-3)?x.toExponential(1):x.toLocaleString(undefined,{maximumFractionDigits:d});
+const med=a=>{const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2};
+function go(t){$$(".steps button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t==t));$$("section").forEach(s=>s.classList.toggle("on",s.id=="s"+t));history.replaceState(null,"","#s"+t);scrollTo(0,0)}
+$$(".steps button").forEach(b=>b.onclick=()=>go(b.dataset.t));$$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+if(/^#s[123]$/.test(location.hash))go(location.hash[2]);
+
+/* STEP 1 */
+const D=[["Oct 13",18477.2,24.6],["Oct 14",18505.3,28.1],["Oct 15",18528.2,22.9],["Oct 16",18559.6,31.4],["Oct 17",18586.3,26.7],["Oct 18",18621.5,35.2],["Oct 19",18651.3,29.8],["Oct 20",18674.8,23.5],["Oct 21",18702.4,27.6],["Oct 22",18727.5,25.1],["Oct 23",21411.5,2684],["Oct 24",21442.2,503.2],["Oct 25",21464.0,21.8],["Oct 26",21492.9,28.9]];
+const L=D.map(r=>r[2]),md=med(L),mad=med(L.map(x=>Math.abs(x-md))),mx=Math.max(...L);
+let conf=null,gap=0;
+$("#days").innerHTML=D.map((r,i)=>{const d=i?r[1]-D[i-1][1]:null,g=i?r[2]-d:0,c=i&&Math.abs(g)>.05,big=Math.abs(.6745*(r[2]-md)/mad)>6;if(c){conf=r;gap=g}
+ const note=c?`logged ${f(r[2])}, dial moved ${f(d)}`:big?`${f(r[2]/md,0)}× a normal day`:"normal";
+ return `<div class="day"><span>${r[0]}</span><span class="tr"><i class="${c||big?"x":""}" style="width:${Math.max(1.5,Math.sqrt(r[2]/mx)*100)}%"></i></span><span class="${c?"":""}" style="${c||big?"color:var(--bad);font-weight:600":""}">${note}</span></div>`}).join("");
+$("#a1").innerHTML=`<strong>Mostly yes, but one day contradicts itself.</strong>13 of 14 days match their own meter. <b>Oct 24 does not</b>: the log says ${f(conf[2])} kWh but the dial moved only ${f(conf[2]-gap)} kWh, so ${f(gap)} kWh exists on paper only. That is a records problem, not a power surge. Oct 23 matches its meter but is ${f(2684/md,0)}× a normal day, so the next question is whether that much energy is even possible.`;
+
+/* STEP 2 */
+const PI=[["A","Service rating (amps)",63],["min","Hours-long window (minutes)",89],["comp","Air-conditioner power (kW)",15],["vol","Room size (m³)",300],["chip","Silicon chips in the cabinet (g)",200],["V","Voltage",415],["pf","Power factor",.9],["dT","Chip temperature rise (K)",100]];
+$("#pin").innerHTML=PI.map(p=>`<div><label for="p_${p[0]}">${p[1]}</label><input id="p_${p[0]}" type="number" step="any" value="${p[2]}"></div>`).join("");
+function phys(){
+ const g=k=>+$("#p_"+k).value,A=g("A"),V=g("V"),pf=g("pf"),h=g("min")/60,kwh=2684,vol=g("vol"),comp=g("comp"),chip=g("chip"),dT=g("dT");
+ if(!(h>0&&A>0&&V>0&&pf>0&&vol>0))return;
+ const P=kwh/h,cap=Math.sqrt(3)*V*A*pf/1000,ratio=P/cap,hv=comp*h,hp=Math.min(100,hv/kwh*100),cs=chip/1000*700*dT/3.6e6,cp=cs/kwh*100,un=Math.max(0,100-hp-cp),dts=P*1000/(vol*1.2*1005);
+ $("#b1").style.width=hp+"%";$("#b2").style.width=cp+"%";
+ $("#legend").innerHTML=`<span style="color:var(--ac)">■</span> air conditioner can explain ${f(hp)}% · <span style="color:var(--ok)">■</span> chips can store ${f(cp,3)}% · <span style="color:var(--bad)">■</span> unexplained ${f(un)}%`;
+ $("#a2").className="card ans "+(un>50?"bad":"ok");
+ $("#a2").innerHTML=un>50?`<strong>No. Ordinary equipment can’t explain it.</strong>About ${f(un,0)}% of the energy has nowhere to go.`:`<strong>It could be ordinary.</strong>Only ${f(un,0)}% is unexplained under these assumptions.`;
+ $("#why").innerHTML=`Drawing 2,684 kWh in ${f(h*60,0)} minutes means about <b>${f(P,0)} kW</b>, which is <b>${f(ratio,0)}×</b> what a ${f(A,0)} A service can carry. If it were heat, the room would warm about ${f(dts)} °C every second, but the Department found no heat. So either the figure isn’t a real power draw (a meter or records fault), or the energy is real and didn’t behave like ordinary electricity. Step 3 finds out which.`;
+}
+$("#pin").addEventListener("input",phys);phys();
+
+/* STEP 3 */
+const H=["Records or meter error","Ordinary equipment","Tampering or bypass","Extradigital","Not on the list"],P0=[35,15,10,10,30];
+const T=[
+{q:"Ask the grid operator: did the district’s own meter see a surge on Oct 23?",c:2,a:"No surge seen",b:"Surge seen",l:[.9,.05,.1,.05,.3]},
+{q:"Pull the 15-minute meter readings and breaker log",c:2,a:"Smooth ramp up",b:"One sudden jump",l:[.1,.8,.5,.6,.5]},
+{q:"Check meter service and seal records for Oct 22–24",c:1,a:"Meter was swapped or serviced",b:"No service, seals intact",l:[.7,.05,.2,.05,.2]},
+{q:"Clip a sub-meter and heat camera on the cabinet (needs a repeat event)",c:3,a:"Cabinet draws abnormal power",b:"Cabinet power is normal",l:[.02,.4,.3,.8,.3]},
+{q:"Forensics on the cabinet’s storage (needs authorization)",c:4,a:"Scripted event logged at 22:31",b:"Nothing unusual logged",l:[.01,.05,.1,.9,.1]}];
+const PB={o:["Correct the records and billing.","Test or replace the meter.","Tell the owner and the Department.","Keep and hash all evidence.","Monitor 14 days; reopen on any day that doesn’t reconcile.","Close with a lessons-learned report."],
+e:["Preserve evidence: photos, hashed logs, storage image (with authorization).","Observe with a sub-meter, power logger and heat camera.","Isolate: cut network and wireless links, control access.","Power down via lockout/tagout by a qualified electrician.","Move the cabinet to a lab only after steps 1–4.","Wipe and rebuild from known-good sources; power up in stages.","Update detection rules and keep monitoring."],
+u:["Keep all evidence. This is safe whatever the cause.","Fit a sub-meter and power logger to the cabinet circuit.","Limit physical access to the cabinet.","Do the test marked “Do this next.”","Reopen immediately if another day fails to reconcile."]};
+const ent=a=>-a.reduce((s,x)=>x>0?s+x*Math.log2(x):s,0),cls=p=>[p[0]+p[1]+p[2],p[3],p[4]],nrm=a=>{const s=a.reduce((x,y)=>x+y,0)||1;return a.map(x=>x/s)};
+const lk=(t,o,i)=>o?1-t.l[i]:t.l[i];let ap={};
+$("#pri").innerHTML=H.map((h,i)=>`<div><label for="w${i}">${h}</label><input id="w${i}" type="number" min="0" value="${P0[i]}"></div>`).join("");
+const priors=()=>nrm($$("#pri input").map(e=>Math.max(0,+e.value))),upd=(p,t,o)=>nrm(p.map((x,i)=>x*lk(t,o,i)));
+const post=()=>{let p=priors();Object.keys(ap).forEach(k=>p=upd(p,T[k],ap[k]));return p};
+const verdict=p=>{const c=cls(p);return c[0]>=.85?"o":c[1]>=.85?"e":"u"};
+const eig=(p,t)=>{const pa=p.reduce((s,x,i)=>s+x*t.l[i],0),qa=nrm(p.map((x,i)=>x*t.l[i])),qb=nrm(p.map((x,i)=>x*(1-t.l[i])));return ent(cls(p))-pa*ent(cls(qa))-(1-pa)*ent(cls(qb))};
+const rem=()=>T.map((t,i)=>i).filter(i=>!(i in ap)),best=(p,r)=>r.map(i=>({i,s:eig(p,T[i])/T[i].c})).sort((a,b)=>b.s-a.s);
+function plan(){
+ const p=post(),v=verdict(p),c=cls(p),r=rem(),top=v=="u"&&r.length?best(p,r)[0].i:-1;
+ const n=Object.keys(ap).length;
+ $("#a3").className="card ans "+(v=="o"?"ok":v=="e"?"bad":"");
+ $("#a3").innerHTML=`<strong>${v=="o"?"It’s an ordinary cause.":v=="e"?"It’s an extradigital intrusion.":!r.length?"Still undetermined, all tests used.":"Not enough evidence yet. Extradigital can’t be declared."}</strong>${v=="u"?(r.length?`Next: ${T[top].q}`:"Escalate and keep monitoring."):"A class passed 85%. Use the plan at the bottom."}<br><span class="sm mut">${n} of ${T.length} tests reported.</span>`;
+ $("#tests").innerHTML=T.map((t,i)=>`<div class="q ${i==top?"top":""}">${i==top?'<span class="tag">Do this next</span>':""}<b>${t.q}</b>`+(i in ap?`<div class="got">Result: ${ap[i]?t.b:t.a}<button data-u="${i}">Undo</button></div>`:`<button data-t="${i}" data-o="0">${t.a}</button><button data-t="${i}" data-o="1">${t.b}</button>`)+`</div>`).join("");
+ $("#bars").innerHTML=H.map((h,i)=>`<div class="pb"><span>${h}</span><span class="tr"><i class="${i==3?"x":""}" style="width:${p[i]*100}%"></i></span><span>${f(p[i]*100,0)}%</span></div>`).join("");
+ $("#cls").textContent=`Ordinary causes together: ${f(c[0]*100,0)}%. Extradigital: ${f(c[1]*100,0)}%. Not listed: ${f(c[2]*100,0)}%. A decision needs 85%.`;
+ $("#plan").innerHTML=`<b>${v=="o"?"Ordinary cause plan":v=="e"?"Containment plan":"While we’re still unsure"}</b><ol>${PB[v].map(x=>`<li>${x}</li>`).join("")}</ol><p class="sm mut" style="margin:0">Electrical shutdown must be done by a qualified electrician.</p>`;
+}
+$("#tests").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.u!=null)delete ap[b.dataset.u];else ap[b.dataset.t]=+b.dataset.o;plan()});
+$("#pri").addEventListener("input",plan);$("#rst").onclick=()=>{ap={};$("#simout").innerHTML="";plan()};
+$("#sim").onclick=()=>{const p0=post(),N=3000;let st=0,bad=0,und=0;
+ for(let n=0;n<N;n++){let u=Math.random(),h=0,a=0;for(;h<4;h++){a+=p0[h];if(u<a)break}
+  let q=p0,rr=rem(),s=0;while(verdict(q)=="u"&&rr.length){const b=best(q,rr)[0].i;q=upd(q,T[b],Math.random()<T[b].l[h]?0:1);rr=rr.filter(x=>x!=b);s++}
+  st+=s;const v=verdict(q);if(v=="u")und++;else if((v=="o"&&h>2)||(v=="e"&&h!=3))bad++}
+ $("#simout").innerHTML=`On average the planner needs <b>${f(st/N,1)}</b> tests, ends undecided <b>${f(und/N*100,0)}%</b> of the time, and decides wrongly <b>${f(bad/N*100,0)}%</b>. These depend on the guesses above, so treat them as a design check.`};
+plan();
+</script></body></html>
